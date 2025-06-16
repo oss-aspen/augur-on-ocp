@@ -1,5 +1,4 @@
-# Project template
+# Augur on OpenShift
 
-This is a template to serve as a starting point for new repos.
-
-**Reminder:** Add a license to your new project
+This repository contains the necessary files to deploy Augur on OpenShift. It
+is organized around Kustomize and ArgoCD.
