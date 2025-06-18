@@ -15,7 +15,6 @@ rules:
       .github/workflows/*
   indentation:
     indent-sequences: consistent
-  line-length:
-    allow-non-breakable-inline-mappings: true
+  line-length: disable
   new-lines:
     type: platform

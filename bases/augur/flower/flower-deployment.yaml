@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flower
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: flower
+          image: ghcr.io/chaoss/augur_backend
+          args:
+            - "celery"
+            - "-A"
+            - "augur.tasks.init.celery_app.celery_app"
+            - "flower"
+            - "--max-tasks=1000000"
+          env:
+            - name: AUGUR_DB
+              value: "postgresql+psycopg2://augur:augur@augur-db:5432/augur"  # pragma: allowlist secret
+            - name: REDIS_CONN_STRING
+              value: "redis://redis:6379"
+            - name: RABBITMQ_CONN_STRING
+              value: "amqp://augur:password123@rabbitmq:5672/augur_vhost"  # pragma: allowlist secret
+          ports:
+            - containerPort: 5555

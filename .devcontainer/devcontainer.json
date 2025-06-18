@@ -17,7 +17,12 @@
         // while, and we want to minimize waiting during `git commit`
         "Initialize pre-commit environment": "nohup sh -c 'pre-commit install -f --install-hooks &' < /dev/null > /dev/null 2>&1",
         "Install kustomize": "go install sigs.k8s.io/kustomize/kustomize/v5@latest",
-        "Install kubectl": "curl -sL -o /tmp/kubectl \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\" && sudo install /tmp/kubectl /usr/local/bin",
-        "Install oc": "curl -sL -o /tmp/oc.tar.gz \"https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/latest/openshift-client-linux.tar.gz\" && tar -xzf /tmp/oc.tar.gz -C /tmp && sudo install /tmp/oc /usr/local/bin"
+        "Install kubectl": "curl -sL -o /tmp/kubectl \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\" && \
+                            sudo install /tmp/kubectl /usr/local/bin",
+        "Install oc": "curl -sL -o /tmp/oc.tar.gz \"https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/latest/openshift-client-linux.tar.gz\" && \
+                       tar -xzf /tmp/oc.tar.gz -C /tmp && \
+                       sudo install /tmp/oc /usr/local/bin",
+            "Install packages": "sudo apt-get update && \
+                                 sudo apt-get install -y --no-install-recommends xdg-utils"
     }
 }

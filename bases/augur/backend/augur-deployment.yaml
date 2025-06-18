@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: augur
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: augur
+          image: ghcr.io/chaoss/augur_backend
+          env:
+            - name: AUGUR_DB
+              value: "postgresql+psycopg2://augur:augur@augur-db:5432/augur"  # pragma: allowlist secret
+            - name: AUGUR_DB_SCHEMA_BUILD
+              value: "1"
+            - name: AUGUR_FACADE_REPO_DIRECTORY
+              value: "/facade"
+            - name: AUGUR_GITHUB_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: augur-secret
+                  key: AUGUR_GITHUB_API_KEY
+            - name: AUGUR_GITLAB_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: augur-secret
+                  key: AUGUR_GITLAB_API_KEY
+            - name: AUGUR_GITHUB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: augur-secret
+                  key: AUGUR_GITHUB_USERNAME
+            - name: AUGUR_GITLAB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: augur-secret
+                  key: AUGUR_GITLAB_USERNAME
+            - name: REDIS_CONN_STRING
+              value: "redis://redis:6379"
+            - name: RABBITMQ_CONN_STRING
+              value: "amqp://augur:password123@rabbitmq:5672/augur_vhost"  # pragma: allowlist secret
+            - name: CONFIG_LOCATION
+              value: "/config/config.yml"
+            - name: CACHE_DATADIR
+              value: "/cache"
+            - name: CACHE_LOCKDIR
+              value: "/cache"
+            - name: CELERYBEAT_SCHEDULE_DB
+              value: "/tmp/celerybeat-schedule.db"
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - mountPath: /cache
+              name: cache
+            - mountPath: /config
+              name: config
+            - mountPath: /facade
+              name: facade
+            - mountPath: /logs
+              name: logs
+      volumes:
+        - name: cache
+          emptyDir: {}
+        - name: config
+          persistentVolumeClaim:
+            claimName: augur-config-pvc
+        - name: facade
+          persistentVolumeClaim:
+            claimName: facade-pvc
+        - name: logs
+          emptyDir: {}

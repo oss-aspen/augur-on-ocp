@@ -1,0 +1,25 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../bases
+  # Secret containing GitHub and GitLab tokens (not checked in)
+  # Needs to contain:
+  # - AUGUR_GITHUB_USERNAME
+  # - AUGUR_GITHUB_API_KEY
+  # - AUGUR_GITLAB_USERNAME
+  # - AUGUR_GITLAB_API_KEY
+  - augur-secret.yaml
+
+# Namespace for deployment
+namespace: augur-on-ocp
+
+# Mappings for the augur-specific images used in the deployment
+images:
+  - name: ghcr.io/chaoss/augur_backend
+    newName: johnstrunk/augur-backend
+    newTag: latest
+  - name: ghcr.io/chaoss/augur_keyman
+    newName: johnstrunk/augur-keyman
+    newTag: latest
