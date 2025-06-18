@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # Can't name this "flower" because it causes an env var to be set in the
+  # flower pod that causes it to fail
+  name: flower-dashboard
+spec:
+  ports:
+    - protocol: TCP
+      port: 5555
+      targetPort: 5555
+  type: ClusterIP

@@ -1,0 +1,18 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keyman
+spec:
+  replicas: 1
+  selector:
+  strategy:
+    type: RollingUpdate
+  template:
+    spec:
+      containers:
+        - name: keyman
+          image: ghcr.io/chaoss/augur_keyman:latest
+          env:
+            - name: REDIS_CONN_STRING
+              value: "redis://redis:6379"
