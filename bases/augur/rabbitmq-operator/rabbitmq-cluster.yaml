@@ -1,0 +1,36 @@
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq
+spec:
+  delayStartSeconds: 30
+  override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            # Reset securityContext for the Pods to default so it runs on OpenShift
+            # https://www.rabbitmq.com/kubernetes/operator/using-on-openshift#arbitrary-user-ids
+            containers: []
+            securityContext: {}
+  rabbitmq:
+    additionalConfig: |
+      default_permissions.configure = .*
+      default_permissions.read = .*
+      default_permissions.write = .*
+      default_user_tags.administrator = true
+      default_user_tags.augur = true
+      default_user_tags.augurTag = true
+    advancedConfig: |
+      [
+        {rabbit, [
+          {loopback_users, []},
+          {consumer_timeout, undefined}
+        ]}
+      ].
+  service:
+    type: ClusterIP
+  replicas: 3
+  persistence:
+    storage: 10Gi

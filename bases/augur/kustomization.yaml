@@ -7,10 +7,40 @@ resources:
   - flower
   - keyman
   - postgres
-  - rabbitmq
+  # - rabbitmq
+  - rabbitmq-operator
   - redis
 
 labels:
-  - includeSelectors: true
+  - includeTemplates: true
     pairs:
       app.kubernetes.io/part-of: augur
+
+patches:
+  # Connect the various components to the RabbitMQ cluster
+  - target:
+      kind: Deployment
+      name: augur
+    patch: |- # pragma: allowlist secret
+      - op: add
+        path: "/spec/template/spec/containers/0/env/-"
+        value:
+          name: RABBITMQ_CONN_STRING
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-default-user
+              key: connection_string
+              optional: false
+  - target:
+      kind: Deployment
+      name: flower
+    patch: |- # pragma: allowlist secret
+      - op: add
+        path: "/spec/template/spec/containers/0/env/-"
+        value:
+          name: RABBITMQ_CONN_STRING
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-default-user
+              key: connection_string
+              optional: false

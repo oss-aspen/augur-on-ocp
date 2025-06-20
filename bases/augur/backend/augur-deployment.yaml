@@ -39,8 +39,6 @@ spec:
                   key: AUGUR_GITLAB_USERNAME
             - name: REDIS_CONN_STRING
               value: "redis://redis:6379"
-            - name: RABBITMQ_CONN_STRING
-              value: "amqp://augur:password123@rabbitmq:5672/augur_vhost"  # pragma: allowlist secret
             - name: CONFIG_LOCATION
               value: "/config/config.yml"
             - name: CACHE_DATADIR
