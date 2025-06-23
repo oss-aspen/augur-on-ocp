@@ -4,7 +4,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended", // Use recommended settings
-    "docker:pinDigests", // Pin container digests
+    // "docker:pinDigests", // Pin container digests
     "helpers:pinGitHubActionDigests", // Pin GitHub action digests
     ":enablePreCommit", // Enable updates to pre-commit repos
     ":gitSignOff", // Add Signed-off-by line to commit messages

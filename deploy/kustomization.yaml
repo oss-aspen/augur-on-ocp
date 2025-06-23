@@ -19,7 +19,7 @@ namespace: augur-on-ocp
 images:
   - name: ghcr.io/chaoss/augur_backend
     newName: johnstrunk/augur-backend
-    newTag: latest@sha256:a2eb5a3d6797552cb299ab650acb4abcfb2d3ea5b590dfb0dfd8db8f305406fd
+    newTag: latest
   - name: ghcr.io/chaoss/augur_keyman
     newName: johnstrunk/augur-keyman
-    newTag: latest@sha256:85d8546c0cba7ff9780c82c4d57c88445a2657e6b31252c342f5e24ca05671dc
+    newTag: latest
