@@ -23,6 +23,13 @@
   },
   "packageRules": [
     {
+      "description": "Don't pin container digests",
+      "matchDatasources": [
+        "docker"
+      ],
+      "pinDigests": false
+    },
+    {
       "description": "Update golang tag in dockerfile & golang version in workflows in a single PR",
       "groupName": "golang version",
       "matchDepNames": [
