@@ -1,0 +1,46 @@
+---
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: augurdb
+spec:
+  postgresVersion: 16
+  instances:
+    - name: instance1
+      dataVolumeClaimSpec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            # Size of the database volume
+            storage: 1Gi
+      # Set the number of DB replicas to 3
+      replicas: 3
+      topologySpreadConstraints:
+        - maxSkew: 1
+          # This key is used to ensure instances are spread across failure domains
+          # kubernetes.io/hostname spreads instances across nodes
+          # topology.kubernetes.io/zone spreads instances across zones w/in a region
+          # topology.kubernetes.io/region spreads instances across regions
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              postgres-operator.crunchydata.com/instance-set: instance1
+  users:
+    # Create the 'augur' user with superuser privileges and give it access to the 'augur' database
+    - name: augur
+      databases:
+        - augur
+      options: "SUPERUSER"
+  backups:  # TODO: Configure backups
+    pgbackrest:
+      repos:
+        - name: repo1
+          volume:
+            volumeClaimSpec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 1Gi

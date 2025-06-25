@@ -3,10 +3,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - augur-db-secret.yaml
-  - postgres-deployment.yaml
-  - postgres-pvc.yaml
-  - postgres-svc.yaml
+  - augurdb-postgrescluster.yaml
 
 labels:
   - includeSelectors: true
