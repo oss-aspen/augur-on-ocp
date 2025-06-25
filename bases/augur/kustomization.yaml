@@ -6,8 +6,7 @@ resources:
   - backend
   - flower
   - keyman
-  - postgres
-  # - rabbitmq
+  - postgres-operator
   - rabbitmq-operator
   - redis
 
@@ -21,7 +20,7 @@ patches:
   - target:
       kind: Deployment
       name: augur
-    patch: |- # pragma: allowlist secret
+    patch: |-  # pragma: allowlist secret
       - op: add
         path: "/spec/template/spec/containers/0/env/-"
         value:
@@ -34,7 +33,7 @@ patches:
   - target:
       kind: Deployment
       name: flower
-    patch: |- # pragma: allowlist secret
+    patch: |-  # pragma: allowlist secret
       - op: add
         path: "/spec/template/spec/containers/0/env/-"
         value:
@@ -43,4 +42,47 @@ patches:
             secretKeyRef:
               name: rabbitmq-default-user
               key: connection_string
+              optional: false
+  # Connect the augur backend to the database
+  # The postgres-operator creates a secret named `<cluster-name>-pguser-<db-user>`
+  # that contains the database connection information and credentials.
+  - target:
+      kind: Deployment
+      name: augur
+    patch: |- # pragma: allowlist secret
+      - op: add
+        path: "/spec/template/spec/containers/0/env/-"
+        value:
+          name: AUGUR_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: augurdb-pguser-augur
+              key: dbname
+              optional: false
+      - op: add
+        path: "/spec/template/spec/containers/0/env/-"
+        value:
+          name: AUGUR_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: augurdb-pguser-augur
+              key: user
+              optional: false
+      - op: add
+        path: "/spec/template/spec/containers/0/env/-"
+        value:
+          name: AUGUR_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: augurdb-pguser-augur
+              key: password
+              optional: false
+      - op: add
+        path: "/spec/template/spec/containers/0/env/-"
+        value:
+          name: AUGUR_DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: augurdb-pguser-augur
+              key: host
               optional: false

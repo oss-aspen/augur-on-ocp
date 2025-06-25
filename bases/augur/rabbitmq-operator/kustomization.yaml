@@ -13,7 +13,7 @@ labels:
       app.kubernetes.io/name: rabbitmq
 
 patches:
-  # Force the RabbitMQ Pods to have the common labels so the PDB can select them
+  # Force the RabbitMQ Pods to have labels so the PDB can select them
   - patch: |-
       apiVersion: rabbitmq.com/v1beta1
       kind: RabbitmqCluster
@@ -28,3 +28,4 @@ patches:
                   labels:
                     app.kubernetes.io/component: message-queue
                     app.kubernetes.io/name: rabbitmq
+                    pdb-protection: "rabbitmq-pdb"

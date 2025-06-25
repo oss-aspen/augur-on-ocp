@@ -4,12 +4,6 @@ kind: Kustomization
 
 resources:
   - ../bases
-  # Secret containing GitHub and GitLab tokens (not checked in)
-  # Needs to contain:
-  # - AUGUR_GITHUB_USERNAME
-  # - AUGUR_GITHUB_API_KEY
-  # - AUGUR_GITLAB_USERNAME
-  # - AUGUR_GITLAB_API_KEY
   - augur-secret.yaml
 
 # Namespace for deployment

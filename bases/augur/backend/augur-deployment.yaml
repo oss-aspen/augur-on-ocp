@@ -11,8 +11,6 @@ spec:
         - name: augur
           image: ghcr.io/chaoss/augur_backend
           env:
-            - name: AUGUR_DB
-              value: "postgresql+psycopg2://augur:augur@augur-db:5432/augur"  # pragma: allowlist secret
             - name: AUGUR_DB_SCHEMA_BUILD
               value: "1"
             - name: AUGUR_FACADE_REPO_DIRECTORY
