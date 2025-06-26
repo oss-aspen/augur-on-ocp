@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: valkey-config
+data:
+  valkey.conf: |
+    # Listen on all container interfaces
+    bind 0.0.0.0
+    port 6379
+
+    # Enable persistence
+    appendonly yes
+
+    # Set data directory
+    dir /data
+
+  sentinel.conf: |
+    # Sentinel will listen on its standard port
+    port 26379
+
+    # Tell Sentinel to monitor the master group "mycluster".
+    # The master is initially valkey-0.valkey-headless.
+    # The quorum of "2" means at least two Sentinels must agree
+    # before a failover is initiated.
+    sentinel monitor mycluster valkey-0.valkey-headless 6379 2
+
+    # Time in ms after which a master is considered down
+    sentinel down-after-milliseconds mycluster 5000
+
+    # Number of replicas that can sync with a new master at once
+    sentinel parallel-syncs mycluster 1
+
+    # Timeout for the failover process itself in ms
+    sentinel failover-timeout mycluster 15000

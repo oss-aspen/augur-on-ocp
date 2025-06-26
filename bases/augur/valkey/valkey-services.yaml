@@ -1,0 +1,42 @@
+---
+# Headless service for DNS discovery among pods in the StatefulSet
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey-headless
+spec:
+  clusterIP: None
+  selector:
+    app: valkey
+  ports:
+    - name: valkey
+      port: 6379
+      targetPort: 6379
+
+# ---
+# # Standard service for read-only clients, load-balances across all pods
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: valkey-read
+# spec:
+#   selector:
+#     app: valkey
+#   ports:
+#     - name: valkey
+#       port: 6379
+#       targetPort: 6379
+
+---
+# Service for clients to discover and connect to the Sentinels
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey-sentinel
+spec:
+  selector:
+    app: valkey
+  ports:
+    - name: sentinel
+      port: 26379
+      targetPort: 26379

@@ -9,6 +9,7 @@ resources:
   - postgres-operator
   - rabbitmq-operator
   - redis
+  - valkey
 
 labels:
   - includeTemplates: true
