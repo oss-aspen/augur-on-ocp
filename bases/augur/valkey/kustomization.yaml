@@ -4,6 +4,7 @@ kind: Kustomization
 
 resources:
   - valkey-configmap.yaml
+  - valkey-pdb.yaml
   - valkey-services.yaml
   - valkey-statefulset.yaml
 

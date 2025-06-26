@@ -44,6 +44,15 @@ spec:
           ports:
             - name: valkey
               containerPort: 6379
+          readinessProbe:
+            exec:
+              command:
+                - valkey-cli
+                - PING
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
           volumeMounts:
             - name: config
               mountPath: /etc/valkey
@@ -82,9 +91,31 @@ spec:
           ports:
             - name: sentinel
               containerPort: 26379
+          readinessProbe:
+            exec:
+              command:
+                - valkey-cli
+                - -p
+                - "26379"
+                - PING
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
           volumeMounts:
             - name: config
               mountPath: /etc/valkey
+      topologySpreadConstraints:
+        - maxSkew: 1
+          # This key is used to ensure instances are spread across failure domains
+          # kubernetes.io/hostname spreads instances across nodes
+          # topology.kubernetes.io/zone spreads instances across zones w/in a region
+          # topology.kubernetes.io/region spreads instances across regions
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: valkey
       volumes:
         - name: config
           configMap:

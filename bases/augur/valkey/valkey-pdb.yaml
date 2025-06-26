@@ -1,0 +1,10 @@
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: valkey-pdb
+spec:
+  minAvailable: 2  # To maintain quorum, at least 2 pods must be available
+  selector:
+    matchLabels:
+      app: valkey
