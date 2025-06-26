@@ -1,0 +1,99 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: valkey
+spec:
+  serviceName: valkey-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: valkey
+  template:
+    metadata:
+      labels:
+        app: valkey
+    spec:
+      containers:
+        - name: valkey
+          image: valkey/valkey:7.2
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          command:
+            - "sh"
+            - "-c"
+            - |
+              if [ "$(hostname)" = "valkey-0" ]; then
+                # The primary starts without being a replica.
+                valkey-server /etc/valkey/valkey.conf
+              else
+                # Replicas must resolve the primary's FQDN to an IP address first.
+                MASTER_FQDN="valkey-0.valkey-headless.${POD_NAMESPACE}.svc.cluster.local"
+                echo "Replica waiting for primary DNS: ${MASTER_FQDN}"
+                until getent hosts ${MASTER_FQDN}; do sleep 1; done
+
+                MASTER_IP=$(getent hosts ${MASTER_FQDN} | awk '{ print $1 }')
+                echo "Replica found primary at IP: ${MASTER_IP}"
+
+                # Start as a replica using the resolved IP address.
+                valkey-server /etc/valkey/valkey.conf --replicaof ${MASTER_IP} 6379
+              fi
+          ports:
+            - name: valkey
+              containerPort: 6379
+          volumeMounts:
+            - name: config
+              mountPath: /etc/valkey
+            - name: data
+              mountPath: /data
+        - name: sentinel
+          image: valkey/valkey:7.2
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          command:
+            - "sh"
+            - "-c"
+            - |
+              MASTER_FQDN="valkey-0.valkey-headless.${POD_NAMESPACE}.svc.cluster.local"
+              CONFIG_TEMPLATE="/etc/valkey/sentinel.conf"
+              RUNTIME_CONFIG="/tmp/sentinel.conf"
+
+              echo "Waiting for DNS record for ${MASTER_FQDN}..."
+              until getent hosts ${MASTER_FQDN}; do sleep 1; done
+
+              # Resolve the FQDN to an IP and store it.
+              MASTER_IP=$(getent hosts ${MASTER_FQDN} | awk '{ print $1 }')
+              echo "DNS record found for ${MASTER_FQDN} -> ${MASTER_IP}"
+
+              # Create a new config file using the IP address instead of the hostname.
+              sed "s/valkey-0.valkey-headless/${MASTER_IP}/" "${CONFIG_TEMPLATE}" > "${RUNTIME_CONFIG}"
+
+              echo "Sentinel runtime configuration using IP address:"
+              cat "${RUNTIME_CONFIG}"
+
+              # Start Sentinel with the IP-based config file.
+              valkey-sentinel "${RUNTIME_CONFIG}"
+          ports:
+            - name: sentinel
+              containerPort: 26379
+          volumeMounts:
+            - name: config
+              mountPath: /etc/valkey
+      volumes:
+        - name: config
+          configMap:
+            name: valkey-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
