@@ -9,6 +9,9 @@ spec:
   selector:
     matchLabels:
       app: valkey
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Delete
   template:
     metadata:
       labels:
