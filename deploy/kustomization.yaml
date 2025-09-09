@@ -7,7 +7,7 @@ resources:
   - augur-secret.yaml
 
 # Namespace for deployment
-namespace: augur-on-ocp
+namespace: test-adredwar-augur
 
 # Mappings for the augur-specific images used in the deployment
 images:
