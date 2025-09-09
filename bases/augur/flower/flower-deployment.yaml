@@ -20,6 +20,6 @@ spec:
             - name: AUGUR_DB
               value: "postgresql+psycopg2://augur:augur@augur-db:5432/augur"  # pragma: allowlist secret
             - name: REDIS_CONN_STRING
-              value: "redis://redis:6379"
+              value: "redis://valkey-headless:6379"
           ports:
             - containerPort: 5555

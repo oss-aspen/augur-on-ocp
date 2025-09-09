@@ -8,7 +8,7 @@ resources:
   - keyman
   - postgres-operator
   - rabbitmq-operator
-  - redis
+  # - redis
   - valkey
 
 labels:

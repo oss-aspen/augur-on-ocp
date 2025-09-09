@@ -15,4 +15,4 @@ spec:
           image: ghcr.io/chaoss/augur_keyman:latest
           env:
             - name: REDIS_CONN_STRING
-              value: "redis://redis:6379"
+              value: "redis://valkey-headless:6379"

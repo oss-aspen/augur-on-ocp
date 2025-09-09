@@ -36,7 +36,7 @@ spec:
                   name: augur-secret
                   key: AUGUR_GITLAB_USERNAME
             - name: REDIS_CONN_STRING
-              value: "redis://redis:6379"
+              value: "redis://valkey-headless:6379"
             - name: CONFIG_LOCATION
               value: "/config/config.yml"
             - name: CACHE_DATADIR
