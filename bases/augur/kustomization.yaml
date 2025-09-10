@@ -44,6 +44,10 @@ patches:
               name: rabbitmq-default-user
               key: connection_string
               optional: false
+    # TODO: we need to wrap flower in an entrypoint script to pass it the same connection information
+    # as the below augur deployment to allow it to construct the connection string from multiple variables.
+    # See https://github.com/chaoss/augur/pull/3222 
+    
   # Connect the augur backend to the database
   # The postgres-operator creates a secret named `<cluster-name>-pguser-<db-user>`
   # that contains the database connection information and credentials.
